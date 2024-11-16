@@ -1,11 +1,20 @@
 import { Text, View, StyleSheet } from "react-native";
 import { Link } from "expo-router";
+import ImageViewer from "@/components/ImageViewer";
+import Button from "@/components/Button";
+
+const placeholderImage = require("../../assets/images/background-image.png");
 
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Home Screen</Text>
-      <Link href="/about" style={styles.button}>Learn more about us!</Link>
+      <View style={styles.imageContainer}>
+        <ImageViewer source={placeholderImage} />
+      </View>
+      <View style={styles.footerContainer}>
+        <Button label="Choose a photo" theme="primary" />
+        <Button label="Use current photo" />
+      </View>
     </View>
   );
 }
@@ -20,11 +29,11 @@ const styles = StyleSheet.create({
   text: {
     color: "#fff",
   },
-  button: {
-    color: "#fff",
-    backgroundColor: "#61dafb",
-    padding: 10,
-    marginTop: 20,
-    borderRadius: 5,
+  imageContainer: {
+    flex: 1,
+  },
+  footerContainer: {
+    flex: 1/3,
+    alignItems: "center",
   },
 });
