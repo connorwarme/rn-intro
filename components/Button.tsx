@@ -4,13 +4,13 @@ import { FontAwesome } from "@expo/vector-icons";
 type ButtonProps = {
   label: string;
   theme?: "primary" | "secondary";
-  // onPress: () => void,
+  onPress?: () => void,
 };
 
-export default function Button({ label, theme }: ButtonProps) {
+export default function Button({ label, theme, onPress }: ButtonProps) {
   if (theme === "primary") {
     // use inline styles to override the default styles
-    
+
     return (
       <View
         style={[
@@ -20,7 +20,7 @@ export default function Button({ label, theme }: ButtonProps) {
       >
         <Pressable
           style={[styles.button, { backgroundColor: "#fff" }]}
-          onPress={() => alert("You pressed a button.")}
+          onPress={onPress}
         >
           <FontAwesome
             name="picture-o"
@@ -39,7 +39,7 @@ export default function Button({ label, theme }: ButtonProps) {
     <View style={styles.buttonContainer}>
       <Pressable
         style={styles.button}
-        onPress={() => console.log("you pressed the button")}
+        onPress={onPress ? onPress : () => {console.log("Button pressed.")}}
       >
         <Text style={styles.buttonLabel}>{label}</Text>
       </Pressable>
