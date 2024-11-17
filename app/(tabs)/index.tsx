@@ -4,11 +4,22 @@ import { useState } from "react";
 
 import ImageViewer from "@/components/ImageViewer";
 import Button from "@/components/Button";
+import CircleButton from "@/components/CircleButton";
+import IconButton from "@/components/IconButton";
+import EmojiPicker from "@/components/EmojiPicker";
+import EmojiList from "@/components/EmojiList";
+import EmojiSticker from "@/components/EmojiSticker";
+import { type ImageSource } from "expo-image";
 
 const placeholderImage = require("../../assets/images/background-image.png");
 
 export default function Index() {
-  const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
+  const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [selectedEmoji, setSelectedEmoji] = useState<ImageSource | undefined>(undefined)
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       // pass in an object specifying the ImagePickerOptions:
@@ -20,23 +31,56 @@ export default function Index() {
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
+      setShowAppOptions(true);
     } else {
       alert("You did not select any image.");
     }
   };
   const handleStock = () => {
     setSelectedImage(undefined);
+    setShowAppOptions(true);
+  };
+  const handleReset = () => {
+    setShowAppOptions(false);
+    setSelectedEmoji(undefined);
+  };
+  const handleAddSticker = () => {
+    setIsModalVisible(true);
+  };
+  const handleModalClose = () => {
+    setIsModalVisible(false);
   }
+  const handleSave = () => {};
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <ImageViewer source={placeholderImage} selected={selectedImage} />
+        {selectedEmoji && (
+          <EmojiSticker imageSize={50} source={selectedEmoji} />
+        )}
       </View>
-      <View style={styles.footerContainer}>
-        <Button label="Choose a photo" theme="primary" onPress={pickImageAsync} />
-        <Button label="Use stock photo" onPress={handleStock} />
-      </View>
+      {showAppOptions ? (
+        <View style={styles.optionsContainer}>
+          <View style={styles.optionsRow}>
+            <IconButton label="Reset" icon="refresh" onPress={handleReset} />
+            <CircleButton onPress={handleAddSticker} />
+            <IconButton label="Save" icon="save-alt" onPress={handleSave} />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.footerContainer}>
+          <Button
+            label="Choose a photo"
+            theme="primary"
+            onPress={pickImageAsync}
+          />
+          <Button label="Use stock photo" onPress={handleStock} />
+        </View>
+      )}
+      <EmojiPicker isVisible={isModalVisible} onClose={handleModalClose} >
+        <EmojiList onSelect={setSelectedEmoji} onCloseModal={handleModalClose} />
+      </EmojiPicker>
     </View>
   );
 }
@@ -53,6 +97,14 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
+  },
+  optionsContainer: {
+    position: "absolute",
+    bottom: 80,
+  },
+  optionsRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   footerContainer: {
     flex: 1 / 3,
